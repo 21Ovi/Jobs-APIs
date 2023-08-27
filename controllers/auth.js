@@ -3,19 +3,12 @@ const { StatusCodes } = require("http-status-codes");
 const { BadRequestError, UnauthenticatedError } = require("../errors");
 
 const register = async (req, res) => {
-  try {
-    const user = await User.create({ ...req.body });
-    const token = user.createJWT();
+  const user = await User.create({ ...req.body });
+  const token = user.createJWT();
 
-    res
-      .status(StatusCodes.CREATED)
-      .json({ user: { name: user.name, userId: user._id }, token });
-  } catch (error) {
-    console.error("Error in register:", error);
-    res
-      .status(StatusCodes.INTERNAL_SERVER_ERROR)
-      .json({ msg: "An error occurred during registration.", error });
-  }
+  res
+    .status(StatusCodes.CREATED)
+    .json({ user: { name: user.name, userId: user._id }, token });
 };
 
 const login = async (req, res) => {
