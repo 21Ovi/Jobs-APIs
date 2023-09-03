@@ -8,6 +8,12 @@ const cors = require("cors");
 const xss = require("xss-clean");
 const rateLimiter = require("express-rate-limit");
 
+// Swagger
+const swaggerUI = require("swagger-ui-express");
+const YAML = require("yamljs");
+
+const swaggerDocumnet = YAML.load("./swagger.yaml");
+
 const app = express();
 
 // connectDB
@@ -36,8 +42,15 @@ app.use(xss());
 
 // routes
 app.get("/hello", (req, res) => {
-  res.send("Hello, ovi!");
+  res.send("Hello, ovi");
 });
+
+app.get("/", (req, res) => {
+  res.send('<h1>Jobs API</h1><a href="/api-docs">Documentation</a>');
+});
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocumnet));
+
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 
@@ -45,7 +58,7 @@ app.use("/api/v1/jobs", authenticateUser, jobsRouter);
 app.use(notFoundMiddleware);
 app.use(errorHandlerMiddleware);
 
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const start = async () => {
   try {
